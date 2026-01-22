@@ -1,4 +1,4 @@
-# eds240 Infographic
+# EDS 240 Infographic: Bat distribution and population threats
 
 Author: Sofia Rodas
 
