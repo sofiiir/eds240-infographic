@@ -9,6 +9,9 @@
 #.DS_Store
 .DS_Store
 
+# data
+/data
+
 # User-specific files
 .Ruserdata
 
