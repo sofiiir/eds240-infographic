@@ -55,13 +55,18 @@ These values are held in columns that are dummy variables. The
 ```{r}
 ecosystem_bats <- bats |> 
   select(species_name, forest, savanna, dessert, urban, cave) |> 
-  mutate(ecosystem = case_when(
-    forest == 1 ~ "forest",
-    savanna == 1 ~ "savanna",
-    dessert == 1 ~ "desert",
-    urban == 1 ~ "urban",
-    cave == 1 ~ "cave"
-  ))
+  mutate(forest = case_when(forest == 1 ~ "forest", 
+                            forest == 0 ~ NA)) |> 
+  mutate(savanna = case_when(savanna == 1 ~ "savanna", 
+                              savanna == 0 ~ NA)) |> 
+  mutate(desert = case_when(dessert == 1 ~ "desert",
+                            dessert == 0 ~ NA))  |> 
+  mutate(urban = case_when(urban == 1 ~ "urban",
+                           urban == 0 ~ NA)) |> 
+  mutate(cave = case_when(cave == 1 ~ "cave",
+                          cave == 0 ~ NA)) |> 
+  pivot_longer(cols = forest:cave,
+               names_to = "ecosystem")
 ```
 
  
