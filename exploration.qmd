@@ -1,0 +1,41 @@
+---
+title: "exploration"
+format: html
+message: false
+warning: false
+---
+What does the bat data show?
+```{r}
+#| message: false
+#| warning: false
+
+# load in necessary libraries
+library(tidyverse)
+```
+
+```{r}
+# read in data
+bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |> 
+  janitor::clean_names()
+```
+```{r}
+# view the data 
+head(bats)
+```
+```{r}
+unique(bats$feeding_groups)
+```
+
+```{r}
+bat_feeding_groups<- bats |> 
+  group_by(feeding_groups) |> 
+  summarise(value = n())
+
+ggplot(bat_feeding_groups) +
+  geom_col(aes(value, feeding_groups))+
+  theme_minimal() +
+  theme(axis.title = element_blank()) +
+  labs(title = "Number of Bats ")
+  
+```
+
