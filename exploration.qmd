@@ -22,6 +22,8 @@ bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |>
 # view the data 
 head(bats)
 ```
+
+###What are the different feeding groups in this dataset?
 ```{r}
 unique(bats$feeding_groups)
 ```
@@ -29,13 +31,50 @@ unique(bats$feeding_groups)
 ```{r}
 bat_feeding_groups<- bats |> 
   group_by(feeding_groups) |> 
-  summarise(value = n())
+  summarise(value = n()) |> 
+  arrange(value)
 
 ggplot(bat_feeding_groups) +
   geom_col(aes(value, feeding_groups))+
   theme_minimal() +
   theme(axis.title = element_blank()) +
-  labs(title = "Number of Bats ")
+  labs(title = "Number of Bats per Feeding Group")
   
 ```
 
+
+###How many species are represented in this dataset?
+```{r}
+length(unique(bats$species))
+```
+ So many unique species. 
+ 
+### What region are bats found in most often?
+These values are held in columns that are dummy variables. The 
+
+```{r}
+ecosystem_bats <- bats |> 
+  select(species_name, forest, savanna, dessert, urban, cave) |> 
+  mutate(ecosystem = case_when(
+    forest == 1 ~ "forest",
+    savanna == 1 ~ "savanna",
+    dessert == 1 ~ "desert",
+    urban == 1 ~ "urban",
+    cave == 1 ~ "cave"
+  ))
+```
+
+ 
+```{r}
+forest_bats <- bats |> 
+  group_by(forest) |> 
+  summarise(total_forest = n())
+
+# ggplot(bat_feeding_groups) +
+#   geom_col(aes(value, feeding_groups))+
+#   theme_minimal() +
+#   theme(axis.title = element_blank()) +
+#   labs(title = "Number of Bats per Feeding Group")
+```
+
+ 
