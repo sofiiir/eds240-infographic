@@ -65,22 +65,50 @@ ecosystem_bats <- bats |>
                            urban == 0 ~ NA)) |> 
   mutate(cave = case_when(cave == 1 ~ "cave",
                           cave == 0 ~ NA)) |> 
-  pivot_longer(cols = forest:cave,
+  pivot_longer(cols = c(forest, savanna, desert, urban, cave),
                names_to = "ecosystem_type",
-               values_to = "ecosystem")
+               values_to = "ecosystem") |> 
+  filter(!is.na(ecosystem)) |> 
+  select(species_name, ecosystem)
 ```
 
+```{r}
+ecosystem_bat_values <- ecosystem_bats |> 
+  group_by(ecosystem) |> 
+  summarise(value = n()) |> 
+  arrange(value)
+```
+
+```{r}
+ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void()
+```
+What is the breakup of bats feeding groups divided by ecosystem? 
  
 ```{r}
-forest_bats <- bats |> 
-  group_by(forest) |> 
-  summarise(total_forest = n())
+# join two datasets to get feeding group and ecosystem type
+bat_eco_feeding <- full_join(ecosystem_bats, bats, by = "species_name")
 
-# ggplot(bat_feeding_groups) +
-#   geom_col(aes(value, feeding_groups))+
-#   theme_minimal() +
-#   theme(axis.title = element_blank()) +
-#   labs(title = "Number of Bats per Feeding Group")
+# select only the necessary columns
+bat_eco_feeding <- bat_eco_feeding |> 
+  select(species_name, ecosystem, feeding_groups)
+
+# calculate values for each ecosystem feeding group combination
+bat_eco_feeding <- bat_eco_feeding |> 
+  group_by(ecosystem, feeding_groups) |> 
+  summarise(value = n()) |> 
+  arrange(value) |> 
+  filter(!is.na(ecosystem)) |> 
+  ungroup()
+  
 ```
 
+```{r}
+ggplot(bat_eco_feeding) +
+  geom_col(aes(value, feeding_groups), fill = "darkblue") +
+  facet_wrap(~ecosystem) + 
+  theme_minimal()
+```
  
