@@ -4,6 +4,10 @@ format: html
 message: false
 warning: false
 ---
+# Global bat data exploration
+
+This data was acquired from the open-source project intended to aggregate data for bats that live in karsts and caves. This data project is called [DarkCideS 1.0](https://darkcides.wordpress.com/). 
+
 What does the bat data show?
 ```{r}
 #| message: false
@@ -23,7 +27,7 @@ bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |>
 head(bats)
 ```
 
-###What are the different feeding groups in this dataset?
+###What are the different feeding groups in observed bats from caves and karsts?
 ```{r}
 unique(bats$feeding_groups)
 ```
@@ -49,7 +53,7 @@ length(unique(bats$species))
 ```
  So many unique species. 
  
-### What region are bats found in most often?
+### What ecosystems are bats that live in caves found in most often?
 These values are held in columns that are dummy variables. The 
 
 ```{r}
@@ -85,7 +89,7 @@ ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
   coord_polar("y", start = 0) +
   theme_void()
 ```
-What is the breakup of bats feeding groups divided by ecosystem? 
+### Does feeding group influence which ecosystem cave bats frequent? 
  
 ```{r}
 # join two datasets to get feeding group and ecosystem type
@@ -111,4 +115,20 @@ ggplot(bat_eco_feeding) +
   facet_wrap(~ecosystem) + 
   theme_minimal()
 ```
+1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
+
+The bats studied around the world are most likely to be insectivores, followed by frugivores, and omnivores as shown in the first bar plot. The pie chart shows that most bats have been observed in forests closely followed by caves. One of the most interesting aspects of facetting bat observations by ecosystem is that most bats observed in urban areas are frugivores. 
+
+2. In FPM #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)? Have any new questions emerged?
+
+I originally was interested in looking at white-nose synodrome in bats across North America, however after much research it is proving difficult to find white nose syndrome data that is readily available. I did find bat data that is a comprehensive summary of bat data from around the world. Instead three questions I plan to ask:
+
+- What regions have the most bat studies? 
+
+- What are bats feeding habits and ecosystem needs?
+
+- What regions of the world have the greatest extinction risks for bats?
+
+3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges.  
+The exploration of the data and the plots constructed above are based on one of the four datasets that were downloaded. I need to explore how I will use the other datasets which almost exclusively include longitude and latitude of species observed around the world.  I plan to make at least one geo-spatial visualization which may prove difficult since the observations are global and this will be a challenge to fit into the final infographic with other plots. 
  
