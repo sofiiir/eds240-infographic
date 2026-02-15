@@ -18,26 +18,27 @@ library(tidyverse)
 ```
 
 ```{r}
+#| message: false
+#| warning: false
+
 # read in data
 bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |> 
   janitor::clean_names()
 ```
-```{r}
-# view the data 
-head(bats)
-```
 
-###What are the different feeding groups in observed bats from caves and karsts?
+### What are the different feeding groups in observed bats from caves and karsts?
 ```{r}
 unique(bats$feeding_groups)
 ```
-
+ I want to create a bar graph that shows how many bats were observed globally in each feeding group. 
 ```{r}
+# calculate number of bats per feeding groups
 bat_feeding_groups<- bats |> 
   group_by(feeding_groups) |> 
   summarise(value = n()) |> 
   arrange(value)
 
+# create a bar plot displaying number of bat per feeding group
 ggplot(bat_feeding_groups) +
   geom_col(aes(value, feeding_groups))+
   theme_minimal() +
@@ -47,16 +48,17 @@ ggplot(bat_feeding_groups) +
 ```
 
 
-###How many species are represented in this dataset?
+#### How many species are represented in this dataset?
 ```{r}
 length(unique(bats$species))
 ```
- So many unique species. 
+Too many unique species to effectively display in a visual. 
  
-### What ecosystems are bats that live in caves found in most often?
-These values are held in columns that are dummy variables. The 
+#### What ecosystems are bats that live in caves found in most often?
+These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
 
 ```{r}
+# convert the dummy variables into one tidy column
 ecosystem_bats <- bats |> 
   select(species_name, forest, savanna, dessert, urban, cave) |> 
   mutate(forest = case_when(forest == 1 ~ "forest", 
@@ -75,21 +77,22 @@ ecosystem_bats <- bats |>
   filter(!is.na(ecosystem)) |> 
   select(species_name, ecosystem)
 ```
-
+Calculate the number of bats in each ecosystem. A caveat is that each species can be in more than one ecosystem.
 ```{r}
 ecosystem_bat_values <- ecosystem_bats |> 
   group_by(ecosystem) |> 
   summarise(value = n()) |> 
   arrange(value)
 ```
-
+Create a visual to show where cave bats are most likely to be observed.
 ```{r}
 ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
   geom_bar(stat = "identity", width = 1, color = "white") +
   coord_polar("y", start = 0) +
-  theme_void()
+  theme_void() + 
+  labs(title = "Ecosystem Locations of Bat Observations")
 ```
-### Does feeding group influence which ecosystem cave bats frequent? 
+#### Does feeding group influence which ecosystem cave bats frequent? 
  
 ```{r}
 # join two datasets to get feeding group and ecosystem type
@@ -117,11 +120,11 @@ ggplot(bat_eco_feeding) +
 ```
 1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
 
-The bats studied around the world are most likely to be insectivores, followed by frugivores, and omnivores as shown in the first bar plot. The pie chart shows that most bats have been observed in forests closely followed by caves. One of the most interesting aspects of facetting bat observations by ecosystem is that most bats observed in urban areas are frugivores. 
+The bats that reside in caves and karsts, studied around the world are most likely to be insectivores, followed by frugivores, and omnivores as shown in the first bar plot. The pie chart shows that most bats have been observed in forests closely followed by caves. One of the most interesting aspects of faceting bat observations by ecosystem is that most bats observed in urban areas are frugivores. 
 
 2. In FPM #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)? Have any new questions emerged?
 
-I originally was interested in looking at white-nose synodrome in bats across North America, however after much research it is proving difficult to find white nose syndrome data that is readily available. I did find bat data that is a comprehensive summary of bat data from around the world. Instead three questions I plan to ask:
+I originally was interested in looking at white-nose synodrome in bats across North America, however after much research it is proving difficult to find white nose syndrome data that is readily available. I did find bat data that is a comprehensive summary of bat data from around the world. I plan to answer:
 
 - What regions have the most bat studies? 
 
