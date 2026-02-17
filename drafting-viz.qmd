@@ -5,4 +5,50 @@ author: Sofia Rodas
 message: false
 warning: false
 ---
+# Global bat data exploration
+
+This data was acquired from the open-source project intended to aggregate data for bats that live in karsts and caves. This data project is called [DarkCideS 1.0](https://darkcides.wordpress.com/). 
+
+- What regions have the most bat studies? 
+
+- What are bats feeding habits and ecosystem needs?
+
+- What regions of the world have the greatest extinction risks for bats?
+
+```{r}
+#| message: false
+#| warning: false
+
+# load in necessary libraries
+library(tidyverse)
+library(camcorder) # to save an iteration of all of the visuals made in this qmd
+```
+I'm excited to see what camcorder creates from the visuals I make for this qmd. 
+```{r}
+gg_record(
+  dir = file.path(here::here("data", "recording100")), # where to save the recording
+  device = "png", # device to use to save images
+  width = 4,      # width of saved image
+  height = 6,     # height of saved image
+  units = "in",   # units for width and height
+  dpi = 300       # dpi to use when saving image
+)
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+
+# read in data
+bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |> 
+  janitor::clean_names()
+```
+
+### What are the different feeding groups in observed bats from caves and karsts?
+
+### What ecosystems are bats that live in caves found in most often?
+These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
+
+### Does feeding group influence which ecosystem cave bats frequent? 
 

@@ -15,6 +15,8 @@ What does the bat data show?
 
 # load in necessary libraries
 library(tidyverse)
+library(sf)
+library(tmap)
 ```
 
 ```{r}
@@ -118,6 +120,41 @@ ggplot(bat_eco_feeding) +
   facet_wrap(~ecosystem) + 
   theme_minimal()
 ```
+
+```{r}
+# bats |> 
+#   group_by()
+```
+
+
+# Convert longitude and latitude into geospatial data
+```{r}
+#| warning: false
+#| message: false
+
+geo1 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_2.csv")) |> 
+  janitor::clean_names()
+
+geo2 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |> 
+  janitor::clean_names()
+
+geo3 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_4.csv")) |> 
+  janitor::clean_names()
+```
+
+This data contains longitdue and latitude data but I want this to be geospatial data
+```{r}
+bat_geo1 <- st_as_sf(geo1, coords = c("lattitude", "longitude"), crs = 4326)
+```
+
+Yay! Lets plot this to see what it looks like.
+```{r}
+tm_basemap() + 
+tm_shape(bat_geo1) + 
+  tm_dots(fill = "red")
+```
+
+
 1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
 
 The bats that reside in caves and karsts, studied around the world are most likely to be insectivores, followed by frugivores, and omnivores as shown in the first bar plot. The pie chart shows that most bats have been observed in forests closely followed by caves. One of the most interesting aspects of faceting bat observations by ecosystem is that most bats observed in urban areas are frugivores. 
