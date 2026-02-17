@@ -133,7 +133,8 @@ ggplot(bat_eco_feeding) +
 #| message: false
 
 geo1 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_2.csv")) |> 
-  janitor::clean_names()
+  janitor::clean_names() |> 
+  rename(latitude = lattitude)
 
 geo2 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |> 
   janitor::clean_names()
@@ -141,17 +142,23 @@ geo2 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |>
 geo3 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_4.csv")) |> 
   janitor::clean_names()
 ```
+Join the data frames together
+```{r}
+full_geo <- full_join(geo1, geo2)
+```
 
 This data contains longitdue and latitude data but I want this to be geospatial data
 ```{r}
-bat_geo1 <- st_as_sf(geo1, coords = c("lattitude", "longitude"), crs = 4326)
+# bat_geo1 <- st_as_sf(geo1, coords = c("lattitude", "longitude"), crs = 4326)
+# bat_geo2 <- st_as_sf(geo2, coords = c("latitude", "longitude"), crs = 4326)
+bat_geo <- st_as_sf(full_geo, coords = c("latitude", "longitude"), crs = 4326)
 ```
 
-Yay! Lets plot this to see what it looks like.
+PROBLEM: DATA POINTS MUST BE 
 ```{r}
-tm_basemap() + 
-tm_shape(bat_geo1) + 
-  tm_dots(fill = "red")
+tm_basemap() +
+tm_shape(bat_geo) + 
+  tm_dots(fill = "red") 
 ```
 
 
