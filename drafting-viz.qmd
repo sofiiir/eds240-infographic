@@ -24,6 +24,7 @@ library(tidyverse)
 library(camcorder) # to save an iteration of all of the visuals made in this qmd
 library(png)
 library(plotly)
+library(ggtext)
 ```
 I'm excited to see what camcorder creates from the visuals I make for this qmd. 
 ```{r}
@@ -99,23 +100,123 @@ ggplot(bat_feeding_groups, aes(fill= feeding_groups, y=value, x = "")) +
 ```
 Make a percentage column.
 ```{r}
+sum_feed <- sum(bat_feeding_groups$value)
 
+bat_feeding_groups <- bat_feeding_groups |> 
+  mutate(percentage = (value/sum_feed))
 ```
 
 
 ```{r}
-bat_img <- readPNG(here::here("data", "noun-bat-8134648.png"))
-h <- dim(bat_img) [1]
-w <- dim(bat_img) [2]
+# bat_img <- readPNG(here::here("data", "noun-bat-8134648.png"))
+# h <- dim(bat_img) [1]
+# w <- dim(bat_img) [2]
 ```
 
 ```{r}
 # Find the rows where feet starts and head ends
-pos1 <- which(apply(bat_img[,,1], 1, function(y) any(y==1)))
-mn1 <- min(pos1)
-mx1 <- max(pos1)
-pospctM <- round((mx1-mn1)*pcts[2]/100+mn1)
-pospctF <- round((mx1-mn1)*pcts[1]/100+mn1)
+# pos1 <- which(apply(bat_img[,,1], 1, function(y) any(y==1)))
+# mn1 <- min(pos1)
+# mx1 <- max(pos1)
+# pospct <- round((mx1-mn1)* bat_feeding_groups$percentage/100+mn1)
+```
+```{r}
+# dim(bat_img)
 ```
 
+
+```{r}
+# imgmtx <- bat_img[h:1,,1]
+# whitemtx <- (imgmtx==1)
+# colmtx <- matrix(rep(FALSE,h*w),nrow=h)
+# midpt <- round(w/2)-10
+# colmtx[mx1:pospctM,1:midpt] <- TRUE
+# colmtx[mx1:pospctF,(midpt+1):w] <- TRUE
+# imgmtx[whitemtx & colmtx] <- 0.5
+```
+
+#### What ecosystems are bats that live in caves found in most often?
+These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
+
+```{r}
+# convert the dummy variables into one tidy column
+ecosystem_bats <- bats |> 
+  select(species_name, forest, savanna, dessert, urban, cave) |> 
+  mutate(forest = case_when(forest == 1 ~ "forest", 
+                            forest == 0 ~ NA)) |> 
+  mutate(savanna = case_when(savanna == 1 ~ "savanna", 
+                              savanna == 0 ~ NA)) |> 
+  mutate(desert = case_when(dessert == 1 ~ "desert",
+                            dessert == 0 ~ NA))  |> 
+  mutate(urban = case_when(urban == 1 ~ "urban",
+                           urban == 0 ~ NA)) |> 
+  mutate(cave = case_when(cave == 1 ~ "cave",
+                          cave == 0 ~ NA)) |> 
+  pivot_longer(cols = c(forest, savanna, desert, urban, cave),
+               names_to = "ecosystem_type",
+               values_to = "ecosystem") |> 
+  filter(!is.na(ecosystem)) |> 
+  select(species_name, ecosystem)
+```
+Calculate the number of bats in each ecosystem. A caveat is that each species can be in more than one ecosystem.
+```{r}
+ecosystem_bat_values <- ecosystem_bats |> 
+  group_by(ecosystem) |> 
+  summarise(value = n()) |> 
+  arrange(value) |> 
+  ungroup()
+```
+Create a visual to show where cave bats are most likely to be observed.
+```{r}
+ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  theme_void() + 
+  labs(title = "Ecosystem Locations of Bat Observations")
+```
+
+```{r}
+ggplot(ecosystem_bat_values, aes(x= ecosystem, 
+                                 y = value + 100, 
+                                 color = ecosystem, 
+                                 fill = ecosystem)) +
+  ggforce::geom_link(aes(x = ecosystem, 
+                         xend = ecosystem,
+                         y = 0,
+                         yend = value + 100,
+                         color = ecosystem,
+                         color = after_scale(colorspace::desaturate(color, .3))),
+                     n = 300,
+                     size = .25) +
+    ggpattern::geom_tile_pattern(
+    fill = "transparent",
+    pattern = "image",
+    pattern_filename = here::here("data", "noun-bat-8134648.png")) +
+  coord_polar(theta = "y", start = 4.71, clip = "off") +
+  theme_minimal() + 
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_blank())
+  
+```
+
+```{r}
+# ecosystem_bat_values <- ecosystem_bat_values |> 
+#   mutate(image = list(readPNG(here::here("data", "noun-bat-8134648.png"))))
+```
+
+
+```{r}
+# ggplot(ecosystem_bat_values, aes(ecosystem, value, image = image)) +
+#   geom_isotype_col() +
+#   theme_minimal()
+
+```
+Trouble shooting how to add the bats to the plot.
+```{r}
+ ggplot(ecosystem_bat_values, aes(x = ecosystem, y = value)) +
+  ggpattern::geom_tile_pattern(
+    fill = "transparent",
+    pattern = "image",
+    pattern_filename = here::here("data", "noun-bat-8134648.png")) 
+```
 
