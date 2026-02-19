@@ -84,7 +84,8 @@ Calculate the number of bats in each ecosystem. A caveat is that each species ca
 ecosystem_bat_values <- ecosystem_bats |> 
   group_by(ecosystem) |> 
   summarise(value = n()) |> 
-  arrange(value)
+  arrange(value) |> 
+  ungroup()
 ```
 Create a visual to show where cave bats are most likely to be observed.
 ```{r}
