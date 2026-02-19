@@ -176,10 +176,12 @@ ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
 ```
 
 ```{r}
-ggplot(ecosystem_bat_values, aes(x= ecosystem, 
-                                 y = value + 100, 
-                                 color = ecosystem, 
-                                 fill = ecosystem)) +
+ecosystem_bat_values |> 
+  arrange(value) |> 
+ggplot(aes(x= fct_inorder(ecosystem), 
+           y = value + 100, 
+           color = ecosystem, 
+           fill = ecosystem)) +
   ggforce::geom_link(aes(x = ecosystem, 
                          xend = ecosystem,
                          y = 0,
@@ -188,14 +190,18 @@ ggplot(ecosystem_bat_values, aes(x= ecosystem,
                          color = after_scale(colorspace::desaturate(color, .3))),
                      n = 300,
                      size = .25) +
-    ggpattern::geom_tile_pattern(
-    fill = "transparent",
-    pattern = "image",
-    pattern_filename = here::here("data", "noun-bat-8134648.png")) +
+    ggpattern::geom_tile_pattern(fill = "transparent",
+                                 pattern = "image",
+                                 pattern_filename = here::here("data", "noun-bat-8134648.png")) +
+   annotate(geom = "segment",
+            x = 0.95, xend = 5.5,
+             y = 1, yend = 1,
+            linewidth = 0.6) +
   coord_polar(theta = "y", start = 4.71, clip = "off") +
   theme_minimal() + 
   theme(panel.grid.major.y = element_blank(),
-        panel.grid.major.x = element_blank())
+        panel.grid.major.x = element_blank(),
+        axis.title.x = element_blank())
   
 ```
 
