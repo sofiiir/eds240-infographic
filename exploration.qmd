@@ -147,18 +147,46 @@ Join the data frames together
 ```{r}
 full_geo <- full_join(geo1, geo2)
 ```
+```{r}
+south_amer <- geo2 |> 
+  filter(region == "South America")
+
+south_amer_geo <- st_as_sf(south_amer, coords = c("latitude", "longitude"), crs = 3857)
+
+
+tm_basemap() 
+# tm_shape(south_amer_geo) + 
+#   tm_dots(fill = "red")
+```
+
 
 This data contains longitdue and latitude data but I want this to be geospatial data
 ```{r}
-# bat_geo1 <- st_as_sf(geo1, coords = c("lattitude", "longitude"), crs = 4326)
-# bat_geo2 <- st_as_sf(geo2, coords = c("latitude", "longitude"), crs = 4326)
-bat_geo <- st_as_sf(full_geo, coords = c("latitude", "longitude"), crs = 4326)
+bat_geo1 <- st_as_sf(geo1, coords = c("longitude", "latitude"), crs = st_crs(4326))
+bat_geo2 <- st_as_sf(geo2, coords = c("longitude", "latitude"), crs = st_crs(4326))
+bat_geo <- st_as_sf(full_geo, coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+bat_geo1 <- st_transform(bat_geo1, 3857)
+bat_geo2 <- st_transform(bat_geo2, 3857)
+bat_geo <- st_transform(bat_geo, 3857)
 ```
 
-PROBLEM: DATA POINTS MUST BE 
+ 
 ```{r}
-tm_basemap() +
+tm_basemap("OpenStreetMap") +
 tm_shape(bat_geo) + 
+  tm_dots(fill = "red")  
+```
+
+```{r}
+tm_basemap("OpenStreetMap") +
+tm_shape(bat_geo1) + 
+  tm_dots(fill = "red") 
+```
+
+```{r}
+tm_basemap("Esri.WorldTopoMap") +
+tm_shape(bat_geo2) + 
   tm_dots(fill = "red") 
 ```
 
