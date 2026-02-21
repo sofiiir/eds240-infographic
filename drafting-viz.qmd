@@ -268,6 +268,7 @@ bat_dist <- tm_basemap("CartoDB.DarkMatter") +
   tm_shape(geo_cave_bats) + 
   tm_dots(fill = "#FBA2C6", 
           fill_alpha = 0.4)  
+  # tm_layout(outer.margins = c(top = 0.1, bottom = 0.1))
 
 # change the basemap to a grob to layer with the ggplots
 grob_bat <- tmap_grob(bat_dist)
@@ -296,7 +297,8 @@ dist_cave_bats <-
       ),
       plot.margin = margin(b = -1.4, t = 1.6),
       axis.title = element_blank(),
-      axis.text = element_blank()
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     )
 
 ```
@@ -316,6 +318,10 @@ dist_pop_vul <- pop_vul_caves |>
       size = .3,
       bw = .5
     ) +
+    # scale_x_continuous(
+    #   expand = c(.01, .01),
+    #   limits = c(-200, 200)
+    # ) +
   theme(
       panel.background = element_rect(
         color = "transparent",
@@ -327,7 +333,8 @@ dist_pop_vul <- pop_vul_caves |>
       ),
       plot.margin = margin(b = -1.4, t = 1.6),
       axis.title = element_blank(),
-      axis.text = element_blank()
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
     ) + 
   scale_y_reverse()
 ```
@@ -338,14 +345,14 @@ ggdraw(grob_bat) +
             x =  .5,
             y = .663,
             width = 1.008,
-            height = .34,
+            height = .2,
             hjust = .5,
-            vjust = -0.3) +
+            vjust = -0.34) +
   draw_plot(dist_pop_vul, 
             x = .5,
-            y = .24,
+            y = .275,
             width = 1.008,
-            height = .565,
+            height = .2,
             hjust = .5,
             vjust = 1)
 
