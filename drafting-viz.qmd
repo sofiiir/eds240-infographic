@@ -25,6 +25,10 @@ library(camcorder) # to save an iteration of all of the visuals made in this qmd
 library(png)
 library(plotly)
 library(ggtext)
+library(sf)
+library(tmap)
+library(cowplot) # to layer tmap and ggplot
+library(ggplotify)
 ```
 I'm excited to see what camcorder creates from the visuals I make for this qmd. 
 ```{r}
@@ -223,13 +227,6 @@ ggplot(aes(x= fct_inorder(ecosystem),
 #   mutate(image = list(readPNG(here::here("data", "noun-bat-8134648.png"))))
 ```
 
-
-```{r}
-# ggplot(ecosystem_bat_values, aes(ecosystem, value, image = image)) +
-#   geom_isotype_col() +
-#   theme_minimal()
-
-```
 Trouble shooting how to add the bats to the plot.
 ```{r}
  ggplot(ecosystem_bat_values, aes(x = ecosystem, y = value)) +
@@ -237,5 +234,121 @@ Trouble shooting how to add the bats to the plot.
     fill = "transparent",
     pattern = "image",
     pattern_filename = here::here("data", "noun-bat-8134648.png")) 
+```
+# Cave bats location data and landscape vulnerabilities
+```{r}
+#| warning: false
+#| message: false
+
+cave_bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_2.csv")) |> 
+  janitor::clean_names() |> 
+  rename(latitude = lattitude)
+
+landscape_vul <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |> 
+  janitor::clean_names()
+
+bat_parasites <- read_csv(here::here("data", "figshare-bat-data", "Dataset_4.csv")) |> 
+  janitor::clean_names()
+```
+
+
+This data contains longitdue and latitude data so lets convert it to geospatial data
+```{r}
+geo_cave_bats <- st_as_sf(cave_bats, coords = c("longitude", "latitude"), crs = st_crs(4326))
+geo_landscape_vul <- st_as_sf(landscape_vul, coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+
+geo_cave_bats <- st_transform(geo_cave_bats, 3857)
+geo_landscape_vul <- st_transform(geo_landscape_vul, 3857)
+```
+
+Initial plot of the data. 
+```{r}
+bat_dist <- tm_basemap("CartoDB.DarkMatter") +
+  tm_shape(geo_cave_bats) + 
+  tm_dots(fill = "#FBA2C6", 
+          fill_alpha = 0.4)  
+
+# change the basemap to a grob to layer with the ggplots
+grob_bat <- tmap_grob(bat_dist)
+```
+
+Distribution plot of where bat observations are most seen.
+```{r}
+dist_cave_bats <-
+  cave_bats |> 
+  ggplot(aes(longitude)) +
+    geom_density(
+      color = colorspace::darken("#FBA2C6", .2, space ="HLS"),
+      fill = "#FBA2C6",
+      alpha = .6,
+      size = .3,
+      bw = .5
+    ) +
+  theme(
+      panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.margin = margin(b = -1.4, t = 1.6),
+      axis.title = element_blank(),
+      axis.text = element_blank()
+    )
+
+```
+Filter for caves that are relatively close to urban areas and highly populous locations. 
+```{r}
+pop_vul_caves <- landscape_vul |> 
+  filter(urban_dist < 1001 | pop_dens > 500) 
+```
+
+```{r}
+dist_pop_vul <- pop_vul_caves |> 
+  ggplot(aes(longitude)) +
+    geom_density(
+      color = colorspace::darken("#ED570B", .2, space ="HLS"),
+      fill = "#ED570B",
+      alpha = .6,
+      size = .3,
+      bw = .5
+    ) +
+  theme(
+      panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.margin = margin(b = -1.4, t = 1.6),
+      axis.title = element_blank(),
+      axis.text = element_blank()
+    ) + 
+  scale_y_reverse()
+```
+
+```{r}
+ggdraw(grob_bat) + 
+  draw_plot(dist_cave_bats,
+            x =  .5,
+            y = .663,
+            width = 1.008,
+            height = .34,
+            hjust = .5,
+            vjust = -0.3) +
+  draw_plot(dist_pop_vul, 
+            x = .5,
+            y = .24,
+            width = 1.008,
+            height = .565,
+            hjust = .5,
+            vjust = 1)
+
+  
 ```
 
