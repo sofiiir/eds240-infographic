@@ -133,62 +133,41 @@ ggplot(bat_eco_feeding) +
 #| warning: false
 #| message: false
 
-geo1 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_2.csv")) |> 
+cave_bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_2.csv")) |> 
   janitor::clean_names() |> 
   rename(latitude = lattitude)
 
-geo2 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |> 
+landscape_vul <- read_csv(here::here("data", "figshare-bat-data", "Dataset_3.csv")) |> 
   janitor::clean_names()
 
-geo3 <- read_csv(here::here("data", "figshare-bat-data", "Dataset_4.csv")) |> 
+bat_parasites <- read_csv(here::here("data", "figshare-bat-data", "Dataset_4.csv")) |> 
   janitor::clean_names()
 ```
-Join the data frames together
+
+
+This data contains longitdue and latitude data so lets convert it to geospatial data
 ```{r}
-full_geo <- full_join(geo1, geo2)
-```
-```{r}
-south_amer <- geo2 |> 
-  filter(region == "South America")
-
-south_amer_geo <- st_as_sf(south_amer, coords = c("latitude", "longitude"), crs = 3857)
+cave_bats <- st_as_sf(cave_bats, coords = c("longitude", "latitude"), crs = st_crs(4326))
+landscape_vul <- st_as_sf(landscape_vul, coords = c("longitude", "latitude"), crs = st_crs(4326))
 
 
-tm_basemap() 
-# tm_shape(south_amer_geo) + 
-#   tm_dots(fill = "red")
-```
-
-
-This data contains longitdue and latitude data but I want this to be geospatial data
-```{r}
-bat_geo1 <- st_as_sf(geo1, coords = c("longitude", "latitude"), crs = st_crs(4326))
-bat_geo2 <- st_as_sf(geo2, coords = c("longitude", "latitude"), crs = st_crs(4326))
-bat_geo <- st_as_sf(full_geo, coords = c("longitude", "latitude"), crs = st_crs(4326))
-
-bat_geo1 <- st_transform(bat_geo1, 3857)
-bat_geo2 <- st_transform(bat_geo2, 3857)
-bat_geo <- st_transform(bat_geo, 3857)
+cave_bats <- st_transform(cave_bats, 3857)
+landscape_vul <- st_transform(landscape_vul, 3857)
 ```
 
  
 ```{r}
 tm_basemap("OpenStreetMap") +
-tm_shape(bat_geo) + 
+tm_shape(cave_bats) + 
   tm_dots(fill = "red")  
 ```
 
 ```{r}
 tm_basemap("OpenStreetMap") +
-tm_shape(bat_geo1) + 
+tm_shape(landscape_vul) + 
   tm_dots(fill = "red") 
 ```
 
-```{r}
-tm_basemap("Esri.WorldTopoMap") +
-tm_shape(bat_geo2) + 
-  tm_dots(fill = "red") 
-```
 
 
 1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
