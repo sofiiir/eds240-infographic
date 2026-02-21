@@ -61,6 +61,7 @@ These values are held in columns that are dummy variables. They need to be clean
 
 ### Does feeding group influence which ecosystem cave bats frequent? 
 
+## Visual 1
 I want to create a bar graph that shows how many bats were observed globally in each feeding group. 
 ```{r}
 # calculate number of bats per feeding groups
@@ -138,7 +139,7 @@ bat_feeding_groups <- bat_feeding_groups |>
 # colmtx[mx1:pospctF,(midpt+1):w] <- TRUE
 # imgmtx[whitemtx & colmtx] <- 0.5
 ```
-
+## Visual 2
 #### What ecosystems are bats that live in caves found in most often?
 These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
 
@@ -178,7 +179,15 @@ ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
   theme_void() + 
   labs(title = "Ecosystem Locations of Bat Observations")
 ```
-
+Trouble shooting how to add the bats to the plot.
+```{r}
+ ggplot(ecosystem_bat_values, aes(x = ecosystem, y = value)) +
+  ggpattern::geom_tile_pattern(
+    fill = "transparent",
+    pattern = "image",
+    pattern_filename = here::here("data", "noun-bat-8134648.png")) 
+```
+Bat ecosystem usage visual
 ```{r fig.height= 10, fig.width= 10}
 ecosystem_bat_values |> 
   arrange(value) |> 
@@ -227,15 +236,9 @@ ggplot(aes(x= fct_inorder(ecosystem),
 #   mutate(image = list(readPNG(here::here("data", "noun-bat-8134648.png"))))
 ```
 
-Trouble shooting how to add the bats to the plot.
-```{r}
- ggplot(ecosystem_bat_values, aes(x = ecosystem, y = value)) +
-  ggpattern::geom_tile_pattern(
-    fill = "transparent",
-    pattern = "image",
-    pattern_filename = here::here("data", "noun-bat-8134648.png")) 
-```
-# Cave bats location data and landscape vulnerabilities
+
+## Visual 3
+### Cave bats location data and landscape vulnerabilities
 ```{r}
 #| warning: false
 #| message: false
@@ -299,7 +302,10 @@ dist_cave_bats <-
       axis.title = element_blank(),
       axis.text = element_blank(),
       axis.ticks = element_blank()
-    )
+    ) 
+  # labs(
+  #   title = "Bat distribution by Longitude"
+  # )
 
 ```
 Filter for caves that are relatively close to urban areas and highly populous locations. 
@@ -358,4 +364,28 @@ ggdraw(grob_bat) +
 
   
 ```
+TO DO: ADD LABELS TO THE GRAPH ABOVE. 
 
+# FPM 3 Questions
+
+**1. What are the key insights you want your infographic to communicate, and how will your design choices help highlight and support those messages?**
+
+The data I'm working with is intended to inform conservation efforts for cave bats which are often overlooked in conservation efforts. I intend to show the distribution of cave bats as they've been studied thus far to help create visualizations that clearly show what ecosystems are important for cave bats, where these cave bats are located in the world, and the  
+
+**2. What challenges did you encounter or anticipate encountering as you continue to build / iterate on your visualizations in R? If you struggled with mocking up any of your three visualizations, describe those challenges here.**
+
+Visual 1 challenge: There are very few examples of pictorial stacked barplots. The examples of making the stacked barplots involve making a matrix which is proving extremely difficult.
+
+Visual 2 challenge: My goal is to have more space between the bats and the x-axis. Then there will be an increased amount of space to add the ecosystem labels into that space. I can remove the legend once this is completed. I also want to make my visual navyblue to represent bat the darkness of caves. This iteration of the visual is a noun project visual. I plan to make my own bat visual so that I can change the color an make it either the color of the line or white to stand out on a dark background. 
+
+Visual 3 challenges: Creating spacing that fit the three plots was extremely tedious. I changed the various proportions numerous times to get the desired spacing. I plan to add the title and labels on Affinity to avoid further spacing nightmares hence they are not perfect in this iteration. 
+
+
+**3. What ggplot extension tools / packages do you need to use to build your visualizations? Are there any that we haven’t covered in class that you’ll be learning how to use for your visualizations?**
+- `library(cowplot)` : Useful for plotting tmap and ggplot objects.
+- `library(ggplotify)`: Necessary to convert tmap objects into a GROB so that it is compatible with ggplot objects
+
+
+
+**4. What feedback do you need from the instructional team and / or your peers to ensure that your intended message and key insights are clear?**
+I have a fairly clear idea of what I want my visual to look like and how I plan to represent this data. I most need guidance on how to trouble shoot the issues listed in question 2. 
