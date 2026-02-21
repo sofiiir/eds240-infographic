@@ -343,14 +343,14 @@ dist_pop_vul <- pop_vul_caves |>
 ggdraw(grob_bat) + 
   draw_plot(dist_cave_bats,
             x =  .5,
-            y = .663,
+            y = .72,
             width = 1.008,
             height = .2,
             hjust = .5,
             vjust = -0.34) +
   draw_plot(dist_pop_vul, 
             x = .5,
-            y = .275,
+            y = .23,
             width = 1.008,
             height = .2,
             hjust = .5,
