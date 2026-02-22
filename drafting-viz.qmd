@@ -28,27 +28,13 @@ I have three data sets. The first data set  shows all of the cave and karst bats
 
 # load in necessary libraries
 library(tidyverse)
-library(camcorder) # to save an iteration of all of the visuals made in this qmd
 library(png)
-library(plotly)
 library(ggtext)
 library(sf)
 library(tmap)
 library(cowplot) # to layer tmap and ggplot
 library(ggplotify)
 ```
-I'm excited to see what camcorder creates from the visuals I make for this qmd. 
-```{r}
-gg_record(
-  dir = file.path(here::here("data", "recording100")), # where to save the recording
-  device = "png", # device to use to save images
-  width = 4,      # width of saved image
-  height = 6,     # height of saved image
-  units = "in",   # units for width and height
-  dpi = 300       # dpi to use when saving image
-)
-```
-
 
 ```{r}
 #| message: false
@@ -70,21 +56,12 @@ These values are held in columns that are dummy variables. They need to be clean
 ### Does feeding group influence which ecosystem cave bats frequent? 
 
 ## Visual 1
-I want to create a bar graph that shows how many bats were observed globally in each feeding group. 
 ```{r}
 # calculate number of bats per feeding groups
 bat_feeding_groups<- bats |> 
   group_by(feeding_groups) |> 
   summarise(value = n()) |> 
   arrange(value)
-
-# create a bar plot displaying number of bat per feeding group
-ggplot(bat_feeding_groups) +
-  geom_col(aes(value, feeding_groups))+
-  theme_minimal() +
-  theme(axis.title = element_blank()) +
-  labs(title = "Number of Bats per Feeding Group")
-  
 ```
 Define colors
 ```{r}
@@ -200,31 +177,16 @@ ecosystem_bat_values <- ecosystem_bats |>
   arrange(value) |> 
   ungroup()
 ```
-Create a visual to show where cave bats are most likely to be observed.
-```{r}
-ggplot(ecosystem_bat_values, aes(x = "", y = value, fill = ecosystem)) +
-  geom_bar(stat = "identity", width = 1, color = "white") +
-  coord_polar("y", start = 0) +
-  theme_void() + 
-  labs(title = "Ecosystem Locations of Bat Observations")
-```
-Trouble shooting how to add the bats to the plot.
-```{r}
- ggplot(ecosystem_bat_values, aes(x = ecosystem, y = value)) +
-  ggpattern::geom_tile_pattern(
-    fill = "transparent",
-    pattern = "image",
-    pattern_filename = here::here("data", "noun-bat-8134648.png")) 
-```
-Bat ecosystem usage visual
+
+Bat ecosystem usage visual.
 ```{r fig.height= 10, fig.width= 10}
 ecosystem_bat_values |> 
-  arrange(value) |> 
+  arrange(value) |>  # maintain the order of high to low ecosystem use
 ggplot(aes(x= fct_inorder(ecosystem), 
            y = value + 100, 
            color = ecosystem, 
            fill = ecosystem)) +
-  ggforce::geom_link(aes(x = ecosystem, 
+  ggforce::geom_link(aes(x = ecosystem,  # create the lines
                          xend = ecosystem,
                          y = 0,
                          yend = value + 100,
@@ -232,7 +194,7 @@ ggplot(aes(x= fct_inorder(ecosystem),
                          color = after_scale(colorspace::desaturate(color, .3))),
                      n = 30,
                      size = 2) +
-    ggpattern::geom_tile_pattern(fill = "transparent",
+    ggpattern::geom_tile_pattern(fill = "transparent", # add the bats
                                  pattern = "image",
                                  pattern_filename = here::here("data", "noun-bat-8134648.png")) +
 #  geom_text(aes(label = value)) + 
@@ -246,7 +208,7 @@ ggplot(aes(x= fct_inorder(ecosystem),
                                 "#FAE7AE",
                                 "#DA6767"
                                 )) + 
-  coord_polar(theta = "y", start = 7, clip = "off") +
+  coord_polar(theta = "y", start = 7, clip = "off") + # turn this plot circular
   theme_minimal() + 
   theme(panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_blank(),
@@ -259,12 +221,6 @@ ggplot(aes(x= fct_inorder(ecosystem),
        x = "")
   
 ```
-
-```{r}
-# ecosystem_bat_values <- ecosystem_bat_values |> 
-#   mutate(image = list(readPNG(here::here("data", "noun-bat-8134648.png"))))
-```
-
 
 ## Visual 3
 ### Cave bats location data and landscape vulnerabilities
@@ -300,7 +256,7 @@ geo_cave_bats <- st_transform(geo_cave_bats, 3857)
 geo_landscape_vul <- st_transform(geo_landscape_vul, 3857)
 ```
 
-Initial plot of the data. 
+Map of the cave and karst bat research data. 
 ```{r}
 bat_dist <- tm_basemap("CartoDB.DarkMatter") +
   tm_shape(geo_cave_bats) + 
