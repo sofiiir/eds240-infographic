@@ -301,7 +301,8 @@ dist_cave_bats <-
       plot.margin = margin(b = -1.4, t = 1.6),
       axis.title = element_blank(),
       axis.text = element_blank(),
-      axis.ticks = element_blank()
+      axis.ticks = element_blank(),
+      panel.grid = element_blank()
     ) 
   # labs(
   #   title = "Bat distribution by Longitude"
@@ -340,13 +341,14 @@ dist_pop_vul <- pop_vul_caves |>
       plot.margin = margin(b = -1.4, t = 1.6),
       axis.title = element_blank(),
       axis.text = element_blank(),
-      axis.ticks = element_blank()
+      axis.ticks = element_blank(),
+      panel.grid = element_blank()
     ) + 
   scale_y_reverse()
 ```
 
 ```{r}
-ggdraw(grob_bat) + 
+bat_distribution <- ggdraw(grob_bat) + 
   draw_plot(dist_cave_bats,
             x =  .5,
             y = .72,
@@ -364,6 +366,21 @@ ggdraw(grob_bat) +
 
   
 ```
+Save the bat distribution plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "bat_distribution.png"),
+  plot = bat_distribution,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
+
 TO DO: ADD LABELS TO THE GRAPH ABOVE. 
 
 # FPM 3 Questions
