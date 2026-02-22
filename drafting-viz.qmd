@@ -7,13 +7,20 @@ warning: false
 ---
 # Global bat data exploration
 
+**1. Restate the questions you hope to answer with your inforgraphic. This should include one overarching question (think of this as driving the overall theme of your infographic) and at least three subquestions (each of which will be addressed by your infographic’s component visualizations). Have these questions changed at all since FPM #1? If yes, how so?**
+
 This data was acquired from the open-source project intended to aggregate data for bats that live in karsts and caves. This data project is called [DarkCideS 1.0](https://darkcides.wordpress.com/). 
 
-- What regions have the most bat studies? 
+- What regions have the most cave and karst bat observations from research? 
 
 - What are bats feeding habits and ecosystem needs?
 
 - What regions of the world have the greatest extinction risks for bats?
+
+
+**2. Explain which variables from your data set(s) you will use to answer the above questions, and how.**
+I have three data sets. The first data set  shows all of the cave and karst bats that have been documented in research from 1990 to 2021. This dataset will be used to look at the ecosystem and feeding habits of cave and karst bats. The second and third datasets have bat sighting locations and locations of caves and karsts respecitvely. The locations of caves and karsts dataset also has data about the risks to each of the caves. This visual will focus on risks from urban proximity and high population density. 
+
 
 ```{r}
 #| message: false
@@ -54,7 +61,8 @@ bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |>
 
 ### What are the different feeding groups in observed bats from caves and karsts?
 
-Big bat broken up into feeding groups. 
+#### Visual mockup 
+![feeding_mock_up](final_visual_draft/bat_feeding_mockup.jpg)
 
 ### What ecosystems are bats that live in caves found in most often?
 These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
@@ -80,35 +88,48 @@ ggplot(bat_feeding_groups) +
 ```
 Define colors
 ```{r}
-carnivore <- "#E6AA60"
-sanguivore <- "#883955"
-frugivore <- "#C4EBC8"
-insectivore <- "#587792"
-nectarivore <- "#D7A6B3"
-omnivore <- "#07004D"
+feeding_pal <- c("Carnivore" = "#E6AA60",
+                 "Sanguivore" = "#883955",
+                 "Frugivore" = "#C4EBC8",
+                 "Insectivore" = "#587792",
+                 "Nectarivore" = "#D7A6B3",
+                 "Omnivore" = "#07004D")
         
 ```
 
 Make this info into one stacked barplot.
 ```{r}
-ggplot(bat_feeding_groups, aes(fill= feeding_groups, y=value, x = "")) +
+feedinggroup <- bat_feeding_groups |> 
+  arrange(value) |> 
+ggplot(aes(fill= fct_inorder(feeding_groups), y=value, x = "")) +
   geom_bar(position="fill", stat="identity") +
-  scale_fill_manual(values = c(carnivore,
-                               frugivore,
-                               insectivore,
-                               nectarivore,
-                               omnivore,
-                               sanguivore))+
+  scale_fill_manual(values = feeding_pal)+
   labs(y = "Percentage")+
   theme_minimal() + 
   theme(axis.title.x = element_blank()) 
 ```
-Make a percentage column.
-```{r}
-sum_feed <- sum(bat_feeding_groups$value)
 
-bat_feeding_groups <- bat_feeding_groups |> 
-  mutate(percentage = (value/sum_feed))
+Save the bat distribution plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "feedinggroup_bp.png"),
+  plot = feedinggroup,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
+The code below is where I am attempting to figure out how to make a matrix to create the stacked barplot.
+```{r}
+# Make a percentage column.
+# sum_feed <- sum(bat_feeding_groups$value)
+# 
+# bat_feeding_groups <- bat_feeding_groups |> 
+#   mutate(percentage = (value/sum_feed))
 ```
 
 
@@ -139,8 +160,16 @@ bat_feeding_groups <- bat_feeding_groups |>
 # colmtx[mx1:pospctF,(midpt+1):w] <- TRUE
 # imgmtx[whitemtx & colmtx] <- 0.5
 ```
+
+The matrix is extremely confusing. I used affinity to fit the stacked barplot into the bat but am deeply unsatisified. If I don't figure out how to make the matrix I will look for another type of plot. 
+![batfeedinggroups](final_visual_draft/batfeedinggroups.png)
+
 ## Visual 2
 #### What ecosystems are bats that live in caves found in most often?
+#### Inspiration plot
+![inspo_plot](final_visual_draft/inspo_plots/circularplotinspo.png)
+#### Visual mockup 
+![ecosystem_mock_up](final_visual_draft/Ecosystem_mockup.jpg)
 These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
 
 ```{r}
@@ -239,6 +268,12 @@ ggplot(aes(x= fct_inorder(ecosystem),
 
 ## Visual 3
 ### Cave bats location data and landscape vulnerabilities
+#### Inspiration plot
+![inspo_plot](final_visual_draft/inspo_plots/dist_mapplot_inspo.png)
+
+#### Visual mockup 
+![distribution_mock_up](final_visual_draft/distribution_mockup.jpg)
+
 ```{r}
 #| warning: false
 #| message: false
@@ -380,28 +415,28 @@ ggsave(
   scale = 0.6
 )
 ```
+The final figure below was editted using Affinity to add the appropriate titles. 
 
-TO DO: ADD LABELS TO THE GRAPH ABOVE. 
+![distribution_infographic](final_visual_draft/bat_dist_aff.png)
 
 # FPM 3 Questions
 
 **1. What are the key insights you want your infographic to communicate, and how will your design choices help highlight and support those messages?**
 
-The data I'm working with is intended to inform conservation efforts for cave bats which are often overlooked in conservation efforts. I intend to show the distribution of cave bats as they've been studied thus far to help create visualizations that clearly show what ecosystems are important for cave bats, where these cave bats are located in the world, and the  
+The data I'm working with is intended to inform conservation efforts for cave bats which are often overlooked in conservation efforts. I intend to show the distribution of cave bats as they've been studied thus far to help create visualizations that clearly show what ecosystems are important for cave bats, where these cave bats are located in the world, and the feeding habitats that should be protected to ensure these bats have their food necessities.
 
 **2. What challenges did you encounter or anticipate encountering as you continue to build / iterate on your visualizations in R? If you struggled with mocking up any of your three visualizations, describe those challenges here.**
 
-Visual 1 challenge: There are very few examples of pictorial stacked barplots. The examples of making the stacked barplots involve making a matrix which is proving extremely difficult.
+Visual 1 challenge: There are very few examples of pictorial stacked barplots. The examples of making the stacked barplots involve making a matrix which is proving extremely difficult. I attempted to use affinity to change my stacked barplot into the desired shape of a bat but it loses its accuracy since its not a perfect shape. I will not be using the affinity generated plot moving forward. I will likely come up with an alternative plot type. 
 
-Visual 2 challenge: My goal is to have more space between the bats and the x-axis. Then there will be an increased amount of space to add the ecosystem labels into that space. I can remove the legend once this is completed. I also want to make my visual navyblue to represent bat the darkness of caves. This iteration of the visual is a noun project visual. I plan to make my own bat visual so that I can change the color an make it either the color of the line or white to stand out on a dark background. 
+Visual 2 challenge: My goal is to have more space between the bats and the x-axis. Then there will be an increased amount of space to add the ecosystem labels into that area. I can remove the legend once this is completed. I also want to make my visual navyblue to represent the darkness of caves. This iteration of the bat is a noun project visual. I plan to make my own bat visual so that I can change the color and make it either the color of the line or white to stand out on a dark background. 
 
-Visual 3 challenges: Creating spacing that fit the three plots was extremely tedious. I changed the various proportions numerous times to get the desired spacing. I plan to add the title and labels on Affinity to avoid further spacing nightmares hence they are not perfect in this iteration. 
+Visual 3 challenges: Creating spacing that fit the three plots was extremely tedious. I changed the various proportions numerous times to get the desired spacing. I added the title and labels on Affinity to avoid further spacing nightmares, however once I saved the image the distribution plots don't perfectly align with the map. I need to work on finding the appropriate spacing.  
 
 
 **3. What ggplot extension tools / packages do you need to use to build your visualizations? Are there any that we haven’t covered in class that you’ll be learning how to use for your visualizations?**
 - `library(cowplot)` : Useful for plotting tmap and ggplot objects.
 - `library(ggplotify)`: Necessary to convert tmap objects into a GROB so that it is compatible with ggplot objects
-
 
 
 **4. What feedback do you need from the instructional team and / or your peers to ensure that your intended message and key insights are clear?**
