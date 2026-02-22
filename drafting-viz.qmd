@@ -5,7 +5,7 @@ author: Sofia Rodas
 message: false
 warning: false
 ---
-# Global bat data exploration
+# Global cave and karst bat data exploration
 
 **1. Restate the questions you hope to answer with your inforgraphic. This should include one overarching question (think of this as driving the overall theme of your infographic) and at least three subquestions (each of which will be addressed by your infographic’s component visualizations). Have these questions changed at all since FPM #1? If yes, how so?**
 
@@ -391,8 +391,9 @@ Visual 3 challenges: Creating spacing that fit the three plots was extremely ted
 
 
 **3. What ggplot extension tools / packages do you need to use to build your visualizations? Are there any that we haven’t covered in class that you’ll be learning how to use for your visualizations?**
-- `library(cowplot)` : Useful for plotting tmap and ggplot objects.
-- `library(ggplotify)`: Necessary to convert tmap objects into a GROB so that it is compatible with ggplot objects
+
+- `library(cowplot)` : Useful for plotting tmap and ggplot objects.  
+- `library(ggplotify)`: Necessary to convert tmap objects into a GROB so that it is compatible with ggplot objects. 
 
 
 **4. What feedback do you need from the instructional team and / or your peers to ensure that your intended message and key insights are clear?**
