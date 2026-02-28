@@ -152,7 +152,7 @@ These values are held in columns that are dummy variables. They need to be clean
 ```{r}
 # convert the dummy variables into one tidy column
 ecosystem_bats <- bats |> 
-  select(species_name, forest, savanna, dessert, urban, cave) |> 
+  select(species_name, forest, savanna, dessert, urban, cave, wetlands) |> 
   mutate(forest = case_when(forest == 1 ~ "forest", 
                             forest == 0 ~ NA)) |> 
   mutate(savanna = case_when(savanna == 1 ~ "savanna", 
@@ -163,7 +163,9 @@ ecosystem_bats <- bats |>
                            urban == 0 ~ NA)) |> 
   mutate(cave = case_when(cave == 1 ~ "cave",
                           cave == 0 ~ NA)) |> 
-  pivot_longer(cols = c(forest, savanna, desert, urban, cave),
+  mutate(wetlands = case_when(wetlands == 1 ~ "wetland",
+                              wetlands == 0 ~ NA)) |> 
+  pivot_longer(cols = c(forest, savanna, desert, urban, cave, wetlands),
                names_to = "ecosystem_type",
                values_to = "ecosystem") |> 
   filter(!is.na(ecosystem)) |> 
@@ -178,18 +180,29 @@ ecosystem_bat_values <- ecosystem_bats |>
   ungroup()
 ```
 
+Set a color palette for each ecosystem
+```{r}
+ecosystem_pal <- c("forest" = "#A1BD93", 
+                   "savanna" = "#FAE7AE", 
+                   "desert" = "#E8A1A1",
+                   "urban" = "#E5EAFA",
+                   "cave" = "#E4B9C8",
+                   "wetland" = "#74B2BC")
+```
+
+
 Bat ecosystem usage visual.
 ```{r fig.height= 10, fig.width= 10}
 ecosystem_bat_values |> 
   arrange(value) |>  # maintain the order of high to low ecosystem use
 ggplot(aes(x= fct_inorder(ecosystem), 
-           y = value + 100, 
+           y = value + 50, 
            color = ecosystem, 
            fill = ecosystem)) +
   ggforce::geom_link(aes(x = ecosystem,  # create the lines
                          xend = ecosystem,
                          y = 0,
-                         yend = value + 100,
+                         yend = value + 50,
                          color = ecosystem,
                          color = after_scale(colorspace::desaturate(color, .3))),
                      n = 30,
@@ -202,12 +215,7 @@ ggplot(aes(x= fct_inorder(ecosystem),
             x = 0.95, xend = 5.5,
              y = 1, yend = 1,
             linewidth = 0.6) +
-  scale_color_manual(values = c("#E4B9C8",
-                                "#74B2BC",
-                                "#5D7D4D",
-                                "#FAE7AE",
-                                "#DA6767"
-                                )) + 
+  scale_color_manual(values = ecosystem_pal) + 
   coord_polar(theta = "y", start = 7, clip = "off") + # turn this plot circular
   theme_minimal() + 
   theme(panel.grid.major.y = element_blank(),

@@ -62,7 +62,7 @@ These values are held in columns that are dummy variables. They need to be clean
 ```{r}
 # convert the dummy variables into one tidy column
 ecosystem_bats <- bats |> 
-  select(species_name, forest, savanna, dessert, urban, cave) |> 
+  select(species_name, forest, savanna, dessert, urban, cave, wetlands) |> 
   mutate(forest = case_when(forest == 1 ~ "forest", 
                             forest == 0 ~ NA)) |> 
   mutate(savanna = case_when(savanna == 1 ~ "savanna", 
@@ -73,7 +73,9 @@ ecosystem_bats <- bats |>
                            urban == 0 ~ NA)) |> 
   mutate(cave = case_when(cave == 1 ~ "cave",
                           cave == 0 ~ NA)) |> 
-  pivot_longer(cols = c(forest, savanna, desert, urban, cave),
+  mutate(wetlands = case_when(wetlands == 1 ~ "wetland",
+                              wetlands == 0 ~ NA)) |> 
+  pivot_longer(cols = c(forest, savanna, desert, urban, cave, wetlands),
                names_to = "ecosystem_type",
                values_to = "ecosystem") |> 
   filter(!is.na(ecosystem)) |> 
