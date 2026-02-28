@@ -170,6 +170,70 @@ tm_shape(landscape_vul) +
   tm_dots(fill = "red") 
 ```
 
+Population status and extinction risk
+```{r}
+pop_status_df <- bats |> 
+  summarise(.by = c(population_status, extinction_risk), value = n()) |> 
+  arrange(value) |> 
+  ungroup()
+```
+
+Set a color palette
+```{r}
+ext_pal <- c("Decreasing" = "#FFA545",
+                 "Unknown" = "white",
+                 "Stable" = "#A4B1F9",
+             "Increasing" = "#DFFAA5")
+```
+
+
+```{r}
+pop_status_df |> 
+  filter(extinction_risk == "Threatened") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
+  theme_minimal() + 
+  labs(y = "Count",
+      title = "Threatened") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none")
+```
+
+```{r}
+pop_status_df |> 
+  filter(extinction_risk == "Non threatened") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
+  theme_minimal() + 
+  labs(y = "Count",
+      title = "Non threatened") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none")
+```
+
+```{r}
+pop_status_df |> 
+  filter(extinction_risk == "Data Deficient") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
+  theme_minimal() + 
+  labs(y = "Count",
+      title = "Data deficient") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none")
+```
+
+
+
 
 
 1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
