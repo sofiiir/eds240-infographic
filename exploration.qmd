@@ -233,6 +233,64 @@ ggplot() +
 ```
 
 
+### What are the different feeding groups in observed bats from caves and karsts?
+
+#### Visual mockup 
+![feeding_mock_up](final_visual_draft/bat_feeding_mockup.jpg)
+
+### What ecosystems are bats that live in caves found in most often?
+These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
+
+### Does feeding group influence which ecosystem cave bats frequent? 
+
+## Visual 1
+```{r}
+# calculate number of bats per feeding groups
+bat_feeding_groups<- bats |> 
+  group_by(feeding_groups) |> 
+  summarise(value = n()) |> 
+  arrange(value)
+```
+Define colors
+```{r}
+feeding_pal <- c("Carnivore" = "#E6AA60",
+                 "Sanguivore" = "#883955",
+                 "Frugivore" = "#C4EBC8",
+                 "Insectivore" = "#587792",
+                 "Nectarivore" = "#D7A6B3",
+                 "Omnivore" = "#07004D")
+        
+```
+
+Make this info into one stacked barplot.
+```{r}
+feedinggroup <- bat_feeding_groups |> 
+  arrange(value) |> 
+ggplot(aes(fill= fct_inorder(feeding_groups), y=value, x = "")) +
+  geom_bar(position="fill", stat="identity") +
+  scale_fill_manual(values = feeding_pal)+
+  labs(y = "Percentage")+
+  theme_minimal() + 
+  theme(axis.title.x = element_blank()) 
+```
+
+Save the bat distribution plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "feedinggroup_bp.png"),
+  plot = feedinggroup,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
+The code below is where I am attempting to figure out how to make a matrix to create the stacked barplot.
+
+![batfeedinggroups](final_visual_draft/batfeedinggroups.png)
 
 
 

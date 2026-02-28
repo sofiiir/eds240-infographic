@@ -45,101 +45,97 @@ bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |>
   janitor::clean_names()
 ```
 
-### What are the different feeding groups in observed bats from caves and karsts?
-
-#### Visual mockup 
-![feeding_mock_up](final_visual_draft/bat_feeding_mockup.jpg)
-
-### What ecosystems are bats that live in caves found in most often?
-These values are held in columns that are dummy variables. They need to be cleaned for the graphing process. The end goal of the cleaning is a row for each combination of species and ecosystem type.
-
-### Does feeding group influence which ecosystem cave bats frequent? 
-
 ## Visual 1
-```{r}
-# calculate number of bats per feeding groups
-bat_feeding_groups<- bats |> 
-  group_by(feeding_groups) |> 
-  summarise(value = n()) |> 
-  arrange(value)
-```
-Define colors
-```{r}
-feeding_pal <- c("Carnivore" = "#E6AA60",
-                 "Sanguivore" = "#883955",
-                 "Frugivore" = "#C4EBC8",
-                 "Insectivore" = "#587792",
-                 "Nectarivore" = "#D7A6B3",
-                 "Omnivore" = "#07004D")
-        
-```
+### How are the populations of threatened and non-threatened bats changing?
 
-Make this info into one stacked barplot.
 ```{r}
-feedinggroup <- bat_feeding_groups |> 
+pop_status_df <- bats |> 
+  summarise(.by = c(population_status, extinction_risk), value = n()) |> 
   arrange(value) |> 
-ggplot(aes(fill= fct_inorder(feeding_groups), y=value, x = "")) +
-  geom_bar(position="fill", stat="identity") +
-  scale_fill_manual(values = feeding_pal)+
-  labs(y = "Percentage")+
+  ungroup()
+```
+
+Set a color palette
+```{r}
+ext_pal <- c("Decreasing" = "#FFA545",
+                 "Unknown" = "white",
+                 "Stable" = "#A4B1F9",
+             "Increasing" = "#DFFAA5")
+```
+
+
+```{r}
+pop_status_df |> 
+  filter(extinction_risk == "Threatened") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  theme(axis.title.x = element_blank()) 
-```
-
-Save the bat distribution plot.
-```{r}
-# save 14"x12" png ---
-ggsave(
-  filename = here::here("final_visual_draft", "feedinggroup_bp.png"),
-  plot = feedinggroup,
-  device = "png",
-  width = 14, 
-  height = 12,
-  unit = "in",
-  dpi = 300,
-  scale = 0.6
-)
-```
-The code below is where I am attempting to figure out how to make a matrix to create the stacked barplot.
-```{r}
-# Make a percentage column.
-# sum_feed <- sum(bat_feeding_groups$value)
-# 
-# bat_feeding_groups <- bat_feeding_groups |> 
-#   mutate(percentage = (value/sum_feed))
-```
-
-
-```{r}
-# bat_img <- readPNG(here::here("data", "noun-bat-8134648.png"))
-# h <- dim(bat_img) [1]
-# w <- dim(bat_img) [2]
+  labs(y = "Count",
+      title = "Threatened") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ))
 ```
 
 ```{r}
-# Find the rows where feet starts and head ends
-# pos1 <- which(apply(bat_img[,,1], 1, function(y) any(y==1)))
-# mn1 <- min(pos1)
-# mx1 <- max(pos1)
-# pospct <- round((mx1-mn1)* bat_feeding_groups$percentage/100+mn1)
-```
-```{r}
-# dim(bat_img)
+pop_status_df |> 
+  filter(extinction_risk == "Non threatened") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
+  theme_minimal() + 
+  labs(y = "Count",
+      title = "Non threatened") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ))
 ```
 
 
 ```{r}
-# imgmtx <- bat_img[h:1,,1]
-# whitemtx <- (imgmtx==1)
-# colmtx <- matrix(rep(FALSE,h*w),nrow=h)
-# midpt <- round(w/2)-10
-# colmtx[mx1:pospctM,1:midpt] <- TRUE
-# colmtx[mx1:pospctF,(midpt+1):w] <- TRUE
-# imgmtx[whitemtx & colmtx] <- 0.5
+pop_status_df |> 
+  filter(extinction_risk == "Data Deficient") |> 
+ggplot() +
+  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
+               y = value,  fill = population_status)) +
+  # facet_wrap(~extinction_risk, nrow = 3) + 
+  theme_minimal() + 
+  labs(y = "Count",
+      title = "Data deficient") +
+  scale_fill_manual(values = ext_pal) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ))
 ```
 
-The matrix is extremely confusing. I used affinity to fit the stacked barplot into the bat but am deeply unsatisified. If I don't figure out how to make the matrix I will look for another type of plot. 
-![batfeedinggroups](final_visual_draft/batfeedinggroups.png)
+
+
 
 ## Visual 2
 #### What ecosystems are bats that live in caves found in most often?
@@ -223,7 +219,15 @@ ggplot(aes(x= fct_inorder(ecosystem),
         panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank(),
         axis.title.x = element_blank(),
-        axis.text = element_blank()) +
+        axis.text = element_blank(),
+        panel.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      ),
+      plot.background = element_rect(
+        color = "transparent",
+        fill = "transparent"
+      )) +
   labs(title = "Cave and karst  residing bats researched?",
        subtitle = "Cave and karst bats are seen most often in forests",
        x = "")
