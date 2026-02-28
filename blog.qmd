@@ -37,3 +37,5 @@ Bats are keystone species for caves and karsts acting as sources of nutrient res
 
 # References
 Tanalgo, K.C., Tabora, J.A.G., de Oliveira, H.F.M. et al. DarkCideS 1.0, a global database for bats in karsts and caves. Sci Data 9, 155 (2022). https://doi.org/10.1038/s41597-022-01234-4
+
+Tanalgo, Krizler; Tabora, John Aries G.; Oliveira, Hernani Fernandes Magalhães; Haelewaters, Danny; Beranek, Chad T.; Otálora-Ardila, Aída; et al. (2021). Metadata for: DarkCideS 1.0, a global database for bats in karsts and caves. figshare. Dataset. https://doi.org/10.6084/m9.figshare.16413405.v4
