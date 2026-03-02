@@ -65,7 +65,7 @@ ext_pal <- c("Decreasing" = "#FFA545",
 
 
 ```{r}
-pop_status_df |> 
+threatened_bp <- pop_status_df |> 
   filter(extinction_risk == "Threatened") |> 
 ggplot() +
   geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
@@ -85,10 +85,27 @@ ggplot() +
         color = "transparent",
         fill = "transparent"
       ))
+
+threatened_bp
+```
+Save the threatened barplot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "threatened_bp.png"),
+  plot = threatened_bp,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
 ```
 
+
 ```{r}
-pop_status_df |> 
+nonthreated_bp <- pop_status_df |> 
   filter(extinction_risk == "Non threatened") |> 
 ggplot() +
   geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
@@ -108,11 +125,26 @@ ggplot() +
         color = "transparent",
         fill = "transparent"
       ))
+nonthreated_bp
 ```
 
+Save the nonthreatened barplot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "nonthreatened_bp.png"),
+  plot = nonthreatened_bp,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
 
 ```{r}
-pop_status_df |> 
+data_dificient_bp <- pop_status_df |> 
   filter(extinction_risk == "Data Deficient") |> 
 ggplot() +
   geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
@@ -132,8 +164,23 @@ ggplot() +
         color = "transparent",
         fill = "transparent"
       ))
-```
 
+data_dificient_bp
+```
+Save the data deficient barplot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "data_deficient_bp.png"),
+  plot = data_deficient_bp,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
 
 
 
