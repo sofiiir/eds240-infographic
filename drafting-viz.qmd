@@ -34,6 +34,7 @@ library(sf)
 library(tmap)
 library(cowplot) # to layer tmap and ggplot
 library(ggplotify)
+library(ggspatial)
 ```
 
 ```{r}
@@ -73,7 +74,8 @@ ggplot() +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
   labs(y = "Count",
-      title = "Threatened") +
+    # title = "Threatened"
+      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.x = element_blank(),
         legend.position = "none",
@@ -84,7 +86,9 @@ ggplot() +
       plot.background = element_rect(
         color = "transparent",
         fill = "transparent"
-      ))
+      ),
+      panel.grid = element_blank()
+      )
 
 threatened_bp
 ```
@@ -113,7 +117,8 @@ ggplot() +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
   labs(y = "Count",
-      title = "Non threatened") +
+     # title = "Non threatened"
+      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.x = element_blank(),
         legend.position = "none",
@@ -124,8 +129,11 @@ ggplot() +
       plot.background = element_rect(
         color = "transparent",
         fill = "transparent"
-      ))
-nonthreated_bp
+      ),
+      panel.grid = element_blank())
+
+nonthreatened_bp
+
 ```
 
 Save the nonthreatened barplot.
@@ -152,7 +160,8 @@ ggplot() +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
   labs(y = "Count",
-      title = "Data deficient") +
+     # title = "Data deficient"
+      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.x = element_blank(),
         legend.position = "none",
@@ -163,9 +172,10 @@ ggplot() +
       plot.background = element_rect(
         color = "transparent",
         fill = "transparent"
-      ))
+      ),
+      panel.grid = element_blank())
 
-data_dificient_bp
+data_deficient_bp
 ```
 Save the data deficient barplot.
 ```{r}
@@ -327,6 +337,19 @@ bat_dist <- tm_basemap("CartoDB.DarkMatter") +
 grob_bat <- tmap_grob(bat_dist)
 ```
 
+Plot in ggplot to see if this fixes the spacing issues.
+```{r}
+ggplot_map <- ggplot(geo_cave_bats) +
+  ggspatial::annotation_map_tile(type = "cartodark") + # higher zoom values are more detailed 
+  geom_sf(aes(), 
+          color = "#FBA2C6",
+          alpha = 0.4) + 
+  theme_minimal() + 
+  theme(panel.grid = element_blank(),
+        axis.text = element_blank(),
+        plot.margin = margin(0, 0, 0, 0))
+```
+
 Distribution plot of where bat observations are most seen.
 ```{r}
 dist_cave_bats <-
@@ -359,6 +382,20 @@ dist_cave_bats <-
   # )
 
 ```
+Save the bat distribution plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "cave_distribution.png"),
+  plot = dist_cave_bats,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
 Filter for caves that are relatively close to urban areas and highly populous locations. 
 ```{r}
 pop_vul_caves <- landscape_vul |> 
@@ -366,11 +403,11 @@ pop_vul_caves <- landscape_vul |>
 ```
 
 ```{r}
-dist_pop_vul <- pop_vul_caves |> 
+dist_pop_vul <-  pop_vul_caves |> 
   ggplot(aes(longitude)) +
     geom_density(
-      color = colorspace::darken("#ED570B", .2, space ="HLS"),
-      fill = "#ED570B",
+      color = colorspace::darken("#FFA545", .2, space ="HLS"),
+      fill = "#FFA545",
       alpha = .6,
       size = .3,
       bw = .5
@@ -396,26 +433,62 @@ dist_pop_vul <- pop_vul_caves |>
     ) + 
   scale_y_reverse()
 ```
+Save the caves with population and density threats distribution plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "vulnerability_distribution.png"),
+  plot = dist_pop_vul,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
 
 ```{r}
 bat_distribution <- ggdraw(grob_bat) + 
   draw_plot(dist_cave_bats,
             x =  .5,
             y = .72,
-            width = 1.008,
+            width = 1.1,
             height = .2,
             hjust = .5,
-            vjust = -0.34) +
+            vjust = -0.34
+            ) +
   draw_plot(dist_pop_vul, 
             x = .5,
             y = .23,
-            width = 1.008,
-            height = .2,
+            width = 1.1,
+            height = .3,
             hjust = .5,
-            vjust = 1)
+            vjust = 1
+            )
+  
+```
+
+Try to see if the spacing is better in with only ggplot objects.
+```{r}
+bat_distribution <- 
+  ggdraw(ggplot_map) + 
+  draw_plot(dist_cave_bats,
+            x =  0,
+            y = .701,
+            width = 1,
+            height = .3
+            ) +
+  draw_plot(dist_pop_vul, 
+            x = 0,
+            y = 0.03,
+            width = 1,
+            height = .27
+            )
 
   
 ```
+
 Save the bat distribution plot.
 ```{r}
 # save 14"x12" png ---
