@@ -105,7 +105,7 @@ ggsave(
 
 
 ```{r}
-nonthreated_bp <- pop_status_df |> 
+nonthreatened_bp <- pop_status_df |> 
   filter(extinction_risk == "Non threatened") |> 
 ggplot() +
   geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
@@ -144,7 +144,7 @@ ggsave(
 ```
 
 ```{r}
-data_dificient_bp <- pop_status_df |> 
+data_deficient_bp <- pop_status_df |> 
   filter(extinction_risk == "Data Deficient") |> 
 ggplot() +
   geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
