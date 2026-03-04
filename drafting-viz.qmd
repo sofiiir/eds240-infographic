@@ -231,11 +231,17 @@ ecosystem_bat_values <- ecosystem_bats |>
   summarise(value = n()) |> 
   arrange(value) |> 
   ungroup()
+
+# add an extra row for spacing
+ecosystem_bat_values <- add_row(ecosystem_bat_values, 
+                                ecosystem = "clear", 
+                                value = 700 )
 ```
 
 Set a color palette for each ecosystem
 ```{r}
-ecosystem_pal <- c("forest" = "#A1BD93", 
+ecosystem_pal <- c("clear" = "#15161A", # use background color of visual
+                   "forest" = "#A1BD93", 
                    "savanna" = "#FAE7AE", 
                    "desert" = "#E8A1A1",
                    "urban" = "#E5EAFA",
@@ -246,7 +252,7 @@ ecosystem_pal <- c("forest" = "#A1BD93",
 
 Bat ecosystem usage visual.
 ```{r fig.height= 10, fig.width= 10}
-ecosystem_bat_values |> 
+ecosystem_bat_plot <- ecosystem_bat_values |> 
   arrange(value) |>  # maintain the order of high to low ecosystem use
 ggplot(aes(x= fct_inorder(ecosystem), 
            y = value + 50, 
@@ -259,17 +265,21 @@ ggplot(aes(x= fct_inorder(ecosystem),
                          color = ecosystem,
                          color = after_scale(colorspace::desaturate(color, .3))),
                      n = 30,
-                     size = 2) +
-    ggpattern::geom_tile_pattern(fill = "transparent", # add the bats
-                                 pattern = "image",
-                                 pattern_filename = here::here("data", "noun-bat-8134648.png")) +
+                     size = 5) +
+    ggpattern::geom_tile_pattern(fill = "transparent" # add the bats
+                                 # pattern = "image",
+                                 # pattern_filename = here::here("data", "noun-bat-8134648.png")
+                                 ) +
 #  geom_text(aes(label = value)) + 
    annotate(geom = "segment",
-            x = 0.95, xend = 5.5,
+            x = 0.8, xend = 6.5,
              y = 1, yend = 1,
             linewidth = 0.6) +
   scale_color_manual(values = ecosystem_pal) + 
-  coord_polar(theta = "y", start = 7, clip = "off") + # turn this plot circular
+  coord_polar(theta = "y", 
+              start = 7,
+             clip = "off"
+              ) + # turn this plot circular
   theme_minimal() + 
   theme(panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_blank(),
@@ -279,17 +289,29 @@ ggplot(aes(x= fct_inorder(ecosystem),
         axis.text = element_blank(),
         panel.background = element_rect(
         color = "transparent",
-        fill = "transparent"
-      ),
-      plot.background = element_rect(
-        color = "transparent",
-        fill = "transparent"
-      )) +
-  labs(title = "Cave and karst  residing bats researched?",
-       subtitle = "Cave and karst bats are seen most often in forests",
-       x = "")
+        fill = "transparent"), 
+        plot.background = element_rect(
+         color = "transparent",
+         fill = "transparent"),
+        legend.position = "none") +
+  labs(x = "")
   
 ```
+Save the ecosystem plot.
+```{r}
+# save 14"x12" png ---
+ggsave(
+  filename = here::here("final_visual_draft", "ecosystem_bat_plot.png"),
+  plot = ecosystem_bat_plot,
+  device = "png",
+  width = 14, 
+  height = 12,
+  unit = "in",
+  dpi = 300,
+  scale = 0.6
+)
+```
+
 
 ## Visual 3
 ### Cave bats location data and landscape vulnerabilities
