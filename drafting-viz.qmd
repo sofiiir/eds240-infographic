@@ -88,7 +88,11 @@ ggplot() +
         fill = "transparent"
       ),
       panel.grid = element_blank()
-      )
+      ) +
+  scale_y_continuous(
+    limits = c(0, 275),                 # Set y-axis range from 10 to 35
+    breaks = c(25, 50, 75, 100, 200) # Specify custom tick locations
+  )
 
 threatened_bp
 ```
@@ -130,7 +134,11 @@ ggplot() +
         color = "transparent",
         fill = "transparent"
       ),
-      panel.grid = element_blank())
+      panel.grid = element_blank())+
+  scale_y_continuous(
+    limits = c(0, 275),                 # Set y-axis range from 10 to 35
+    breaks = c(25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275) # Specify custom tick locations
+  )
 
 nonthreatened_bp
 
@@ -173,7 +181,11 @@ ggplot() +
         color = "transparent",
         fill = "transparent"
       ),
-      panel.grid = element_blank())
+      panel.grid = element_blank()) +
+  scale_y_continuous(
+    limits = c(0, 275),                 # Set y-axis range from 10 to 35
+    breaks = c(25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275) # Specify custom tick locations
+  )
 
 data_deficient_bp
 ```
@@ -301,7 +313,7 @@ Save the ecosystem plot.
 ```{r}
 # save 14"x12" png ---
 ggsave(
-  filename = here::here("final_visual_draft", "ecosystem_bat_plot.png"),
+  filename = here::here("final_visual_draft", "ecosystem_bat_plot.svg"),
   plot = ecosystem_bat_plot,
   device = "png",
   width = 14, 
