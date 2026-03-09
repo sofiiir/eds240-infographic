@@ -13,9 +13,9 @@ This data was acquired from the open-source project intended to aggregate data f
 
 - What regions have the most cave and karst bat observations from research? 
 
-- What are bats feeding habits and ecosystem needs?
+- What other ecosystems do cave and karst bats use in their life cycle?
 
-- What regions of the world have the greatest extinction risks for bats?
+- What regions of the world are cave and karsts most vulnerable to urban and densely populated areas?
 
 
 **2. Explain which variables from your data set(s) you will use to answer the above questions, and how.**
@@ -73,7 +73,7 @@ ggplot() +
                y = value,  fill = population_status)) +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(y = "Count",
+  labs(y = "Count"
     # title = "Threatened"
       ) +
   scale_fill_manual(values = ext_pal) +
