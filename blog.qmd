@@ -35,6 +35,7 @@ My subheading discussing possible research gaps is intended to inform on the pos
 
 # Bat ecosystem visualization
 ![Bat ecosystem graphic](final_viz/bat-ecosystem-graphic.png)
+
 The importance of bats that use caves and karsts at some part of their life cycle is partially that they bring nutrients from other ecosystems into caves and karsts. This is vital for the health of the cave and karst ecosystems. The visual was made to look like bats flying into a cave. Each bar is in a color that correlates with the ecosystem they were observed in. The length of each bar shows the number of observations in each ecosystem as does the size of the bats. I made the original visual in `ggplot` and added the bats in Affinity. 
 
 # Bat trends population graphic 
@@ -42,12 +43,14 @@ The importance of bats that use caves and karsts at some part of their life cycl
 Finally, I made a barplot that shows population trends in bat populations. I divided the bat populations into those that are non-threatened, threatened, and data deficient. Bat population trends are then categorized as unknown, stable, increasing, and decreasing. I left in the populations that do not have enough data to know either their population status or their trends because it further exhibits research gaps. 
  
  
- # Explore the code
+# Explore the code
+Below is the code to make all of the elements of the infographic visual. 
+
 ```{r}
 #| message: false
 #| warning: false
-#| echo: false
-#| output: false
+#| eval: false 
+#| code-fold: true
 
 # load in necessary libraries
 library(tidyverse)
