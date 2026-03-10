@@ -15,9 +15,11 @@ Bats are keystone species for caves and karsts acting as sources of nutrient res
 
 ### Repository contents
 
-**Blog post**: Blog post explaining data viz choices can be found [here](https://github.com/sofiiir/eds240-infographic/blob/main/blog.qmd).
-**Data Viz Quarto**: Full code creating the visuals [here](https://github.com/sofiiir/eds240-infographic/blob/main/drafting-viz.qmd).
-**Exploration Quarto**: Exploration of data can be found [here](https://github.com/sofiiir/eds240-infographic/blob/main/exploration.qmd).
+- **Blog post**: Blog post explaining data viz choices can be found [here](https://github.com/sofiiir/eds240-infographic/blob/main/blog.qmd).
+  
+- **Data Viz Quarto**: Full code creating the visuals [here](https://github.com/sofiiir/eds240-infographic/blob/main/drafting-viz.qmd).
+  
+- **Exploration Quarto**: Exploration of data can be found [here](https://github.com/sofiiir/eds240-infographic/blob/main/exploration.qmd).
 
 
  ### References 
