@@ -52,9 +52,12 @@ bats <- read_csv(here::here("data", "figshare-bat-data", "Dataset_1.csv")) |>
 ```{r}
 pop_status_df <- bats |> 
   summarise(.by = c(population_status, extinction_risk), value = n()) |> 
-  arrange(value) |> 
+  group_by(population_status, extinction_risk) |> 
+  arrange(factor(population_status, c("Increasing", "Stable", "Decreasing", "Unknown"))) |> 
   ungroup()
 ```
+
+The bar plots will be divided into threatened, non-threatened, and data deficient bats. These three sub-divisions do not all have data for all of the different population trends (Increasing, Stable, Decreasing, Unknown). 
 
 Set a color palette
 ```{r}
@@ -68,16 +71,26 @@ ext_pal <- c("Decreasing" = "#FFA545",
 ```{r}
 threatened_bp <- pop_status_df |> 
   filter(extinction_risk == "Threatened") |> 
+   arrange(factor(population_status, c("Increasing", 
+                                       "Stable", 
+                                       "Decreasing", 
+                                       "Unknown"))) |> 
+  mutate(population_status = fct_relevel(population_status, 
+                                         "Increasing", 
+                                         "Stable", 
+                                         "Decreasing", 
+                                         "Unknown")) |> 
 ggplot() +
-  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
-               y = value,  fill = population_status)) +
+  geom_col(aes(x = value,
+               y = population_status,  
+               fill = population_status)) +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(y = "Count"
+  labs(x = "Count"
     # title = "Threatened"
       ) +
   scale_fill_manual(values = ext_pal) +
-  theme(axis.title.x = element_blank(),
+  theme(axis.title.y = element_blank(),
         legend.position = "none",
         panel.background = element_rect(
         color = "transparent",
@@ -89,7 +102,7 @@ ggplot() +
       ),
       panel.grid = element_blank()
       ) +
-  scale_y_continuous(
+  scale_x_continuous(
     limits = c(0, 275),                 # Set y-axis range from 10 to 35
     breaks = c(25, 50, 75, 100, 200) # Specify custom tick locations
   )
@@ -115,16 +128,26 @@ ggsave(
 ```{r}
 nonthreatened_bp <- pop_status_df |> 
   filter(extinction_risk == "Non threatened") |> 
+  arrange(factor(population_status, c("Increasing", 
+                                       "Stable", 
+                                       "Decreasing", 
+                                       "Unknown"))) |> 
+  mutate(population_status = fct_relevel(population_status, 
+                                         "Increasing", 
+                                         "Stable", 
+                                         "Decreasing", 
+                                         "Unknown")) |> 
 ggplot() +
-  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
-               y = value,  fill = population_status)) +
+  geom_col(aes(x = value,
+               y = population_status,  
+               fill = population_status)) +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(y = "Count",
+  labs(x = "Count",
      # title = "Non threatened"
       ) +
   scale_fill_manual(values = ext_pal) +
-  theme(axis.title.x = element_blank(),
+  theme(axis.title.y  = element_blank(),
         legend.position = "none",
         panel.background = element_rect(
         color = "transparent",
@@ -135,7 +158,7 @@ ggplot() +
         fill = "transparent"
       ),
       panel.grid = element_blank())+
-  scale_y_continuous(
+  scale_x_continuous(
     limits = c(0, 275),                 # Set y-axis range from 10 to 35
     breaks = c(25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275) # Specify custom tick locations
   )
@@ -162,12 +185,22 @@ ggsave(
 ```{r}
 data_deficient_bp <- pop_status_df |> 
   filter(extinction_risk == "Data Deficient") |> 
+  arrange(factor(population_status, c("Increasing", 
+                                       "Stable", 
+                                       "Decreasing", 
+                                       "Unknown"))) |> 
+  mutate(population_status = fct_relevel(population_status, 
+                                         "Increasing", 
+                                         "Stable", 
+                                         "Decreasing", 
+                                         "Unknown")) |> 
 ggplot() +
-  geom_col(aes(x = fct_reorder(population_status, value, .desc = TRUE),
-               y = value,  fill = population_status)) +
+  geom_col(aes(x = value,
+               y = population_status,  
+               fill = population_status)) +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(y = "Count",
+  labs(x = "Count",
      # title = "Data deficient"
       ) +
   scale_fill_manual(values = ext_pal) +
@@ -182,7 +215,7 @@ ggplot() +
         fill = "transparent"
       ),
       panel.grid = element_blank()) +
-  scale_y_continuous(
+  scale_x_continuous(
     limits = c(0, 275),                 # Set y-axis range from 10 to 35
     breaks = c(25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275) # Specify custom tick locations
   )
