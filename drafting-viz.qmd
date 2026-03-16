@@ -57,7 +57,18 @@ pop_status_df <- bats |>
   ungroup()
 ```
 
-The bar plots will be divided into threatened, non-threatened, and data deficient bats. These three sub-divisions do not all have data for all of the different population trends (Increasing, Stable, Decreasing, Unknown). 
+The bar plots will be divided into threatened, non-threatened, and data deficient bats. These three sub-divisions do not all have data for all of the different population trends (Increasing, Stable, Decreasing, Unknown). Let's add some dummy variables to the dataframe so that all the barplots look the same.
+```{r}
+dummy_df <- tibble(population_status = c("Increasing", "Increasing", "Stable"),
+                   extinction_risk = c("Threatened", "Data Deficient", "Data Deficient"),
+                   value = c(0, 0 , 0))
+
+# add the dummy variable to the original data frame
+pop_status_df <- rows_append(pop_status_df, dummy_df)
+```
+
+
+
 
 Set a color palette
 ```{r}
@@ -76,21 +87,19 @@ threatened_bp <- pop_status_df |>
                                        "Decreasing", 
                                        "Unknown"))) |> 
   mutate(population_status = fct_relevel(population_status, 
-                                         "Increasing", 
+                                         "Unknown",
+                                         "Decreasing",
                                          "Stable", 
-                                         "Decreasing", 
-                                         "Unknown")) |> 
+                                         "Increasing")) |> 
 ggplot() +
   geom_col(aes(x = value,
                y = population_status,  
                fill = population_status)) +
   # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(x = "Count"
-    # title = "Threatened"
-      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
         legend.position = "none",
         panel.background = element_rect(
         color = "transparent",
@@ -104,7 +113,7 @@ ggplot() +
       ) +
   scale_x_continuous(
     limits = c(0, 275),                 # Set y-axis range from 10 to 35
-    breaks = c(25, 50, 75, 100, 200) # Specify custom tick locations
+    breaks = c(25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275) # Specify custom tick locations
   )
 
 threatened_bp
@@ -133,21 +142,18 @@ nonthreatened_bp <- pop_status_df |>
                                        "Decreasing", 
                                        "Unknown"))) |> 
   mutate(population_status = fct_relevel(population_status, 
-                                         "Increasing", 
+                                         "Unknown",
+                                         "Decreasing",
                                          "Stable", 
-                                         "Decreasing", 
-                                         "Unknown")) |> 
+                                         "Increasing")) |> 
 ggplot() +
   geom_col(aes(x = value,
                y = population_status,  
                fill = population_status)) +
-  # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(x = "Count",
-     # title = "Non threatened"
-      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.y  = element_blank(),
+        axis.title.x = element_blank(),
         legend.position = "none",
         panel.background = element_rect(
         color = "transparent",
@@ -190,21 +196,18 @@ data_deficient_bp <- pop_status_df |>
                                        "Decreasing", 
                                        "Unknown"))) |> 
   mutate(population_status = fct_relevel(population_status, 
-                                         "Increasing", 
+                                         "Unknown",
+                                         "Decreasing",
                                          "Stable", 
-                                         "Decreasing", 
-                                         "Unknown")) |> 
+                                         "Increasing")) |> 
 ggplot() +
   geom_col(aes(x = value,
                y = population_status,  
                fill = population_status)) +
-  # facet_wrap(~extinction_risk, nrow = 3) + 
   theme_minimal() + 
-  labs(x = "Count",
-     # title = "Data deficient"
-      ) +
   scale_fill_manual(values = ext_pal) +
   theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
         legend.position = "none",
         panel.background = element_rect(
         color = "transparent",
