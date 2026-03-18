@@ -4,9 +4,9 @@ Author: Sofia Rodas
 
 This repository stores the work towards creating a Final project infographic for eds240 as part of the MEDS program at Bren. 
 
+<img width="6833" height="8936" alt="bat_infographic" src="https://github.com/user-attachments/assets/e24c0c33-d174-4857-938c-36062dd22e57" />
 
 
-[bat_infographic.pdf](https://github.com/user-attachments/files/26075816/bat_infographic.pdf)
 
 
 ### Introduction
